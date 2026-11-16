@@ -17,7 +17,9 @@ async def check_ok() -> None:
 
 
 async def check_boom() -> None:
-    raise RuntimeError("secret-db-password-in-message")  # must never reach the response body
+    raise RuntimeError(
+        "secret-db-password-in-message"
+    )  # must never reach the response body
 
 
 async def check_hangs() -> None:
@@ -44,7 +46,10 @@ def test_health_returns_ok(client):
 def test_ready_with_no_checks_is_ready(client):
     r = client.get("/ready")
     assert r.status_code == 200
-    assert r.json() == {"status": "ready", "checks": {}}  # nothing registered -> nothing can fail
+    assert r.json() == {
+        "status": "ready",
+        "checks": {},
+    }  # nothing registered -> nothing can fail
 
 
 def test_ready_when_all_checks_pass(client):
@@ -57,15 +62,18 @@ def test_ready_when_all_checks_pass(client):
 def test_ready_returns_503_when_one_check_fails(client):
     client.app.state.readiness_checks = {"db": check_ok, "cache": check_boom}
     r = client.get("/ready")
-    assert r.status_code == 503                      # load balancers stop routing on 503
+    assert r.status_code == 503  # load balancers stop routing on 503
     assert r.json()["status"] == "not_ready"
-    assert r.json()["checks"] == {"db": "ok", "cache": "fail"}  # healthy checks are still reported
+    assert r.json()["checks"] == {
+        "db": "ok",
+        "cache": "fail",
+    }  # healthy checks are still reported
 
 
 def test_ready_does_not_leak_error_details(client):
     client.app.state.readiness_checks = {"db": check_boom}
     r = client.get("/ready")
-    assert "secret" not in r.text                    # exception text stays in the logs only
+    assert "secret" not in r.text  # exception text stays in the logs only
 
 
 def test_ready_times_out_a_hung_check(client, monkeypatch):
@@ -74,7 +82,7 @@ def test_ready_times_out_a_hung_check(client, monkeypatch):
     client.app.state.readiness_checks = {"cache": check_hangs}
     r = client.get("/ready")
     assert r.status_code == 503
-    assert r.json()["checks"] == {"cache": "fail"}   # a timeout counts as a failure
+    assert r.json()["checks"] == {"cache": "fail"}  # a timeout counts as a failure
 
 
 # ---------------------------------------------------------------- real app --
@@ -82,4 +90,4 @@ def test_real_app_starts_and_serves_health():
     # `with` runs the lifespan: startup code before the block, shutdown code after it
     with TestClient(real_app) as c:
         assert c.get("/health").json() == {"status": "ok"}
-        assert c.get("/ready").status_code == 200    # no checks registered yet in week 1
+        assert c.get("/ready").status_code == 200  # no checks registered yet in week 1

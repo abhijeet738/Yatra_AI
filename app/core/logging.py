@@ -10,16 +10,22 @@ from structlog.typing import Processor
 def configure_logging(env: str = "dev", level: str = "INFO") -> None:
     """Call once at startup (from main.py), before anything logs."""
     processors: list[Processor] = [
-        structlog.contextvars.merge_contextvars,             # adds fields bound via bind_trip_context()
-        structlog.processors.add_log_level,                  # adds "level": "info" / "warning" / ...
+        structlog.contextvars.merge_contextvars,  # adds fields bound via bind_trip_context()
+        structlog.processors.add_log_level,  # adds "level": "info" / "warning" / ...
         structlog.processors.TimeStamper(fmt="iso", utc=True),  # ISO timestamp in UTC
-        structlog.processors.StackInfoRenderer(),            # supports stack_info=True on a log call
+        structlog.processors.StackInfoRenderer(),  # supports stack_info=True on a log call
     ]
     if env == "prod":
-        processors.append(structlog.processors.format_exc_info)  # exceptions become a plain string field
-        processors.append(structlog.processors.JSONRenderer())   # machine-readable, one object per line
+        processors.append(
+            structlog.processors.format_exc_info
+        )  # exceptions become a plain string field
+        processors.append(
+            structlog.processors.JSONRenderer()
+        )  # machine-readable, one object per line
     else:
-        processors.append(structlog.dev.ConsoleRenderer())       # coloured output that also prints tracebacks nicely
+        processors.append(
+            structlog.dev.ConsoleRenderer()
+        )  # coloured output that also prints tracebacks nicely
 
     structlog.configure(
         processors=processors,
@@ -28,7 +34,7 @@ def configure_logging(env: str = "dev", level: str = "INFO") -> None:
             getattr(logging, level.upper(), logging.INFO)
         ),
         logger_factory=structlog.PrintLoggerFactory(),  # write to stdout, where Docker/Render collect logs
-        cache_logger_on_first_use=True,                 # small speed-up after the first call
+        cache_logger_on_first_use=True,  # small speed-up after the first call
     )
 
 
