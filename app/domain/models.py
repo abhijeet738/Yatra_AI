@@ -51,13 +51,6 @@ class TripRequest(BaseModel):
 
 
 # ------------------------------------------------------ provider records --
-class DailyWeather(BaseModel):
-    date: date
-    t_max: float  # daytime high, °C
-    t_min: float  # night low, °C
-    rain_pct: float | None = None  # rain probability; None if the source lacks it
-
-
 class TrainOption(BaseModel):
     number: str  # e.g. "12958"
     name: str
@@ -133,3 +126,44 @@ class Itinerary(BaseModel):
     # Default lets the LLM omit it; our code recomputes the real total afterwards.
     total_cost: Money = Money(amount=0, source=PriceSource.ESTIMATED)
     summary: str
+
+
+# --- in app/domain/models.py: replace DailyWeather with this version ---
+class DailyWeather(BaseModel):
+    date: date
+    t_max: float  # daytime high, °C
+    t_min: float  # night low, °C
+    rain_pct: float | None = None  # rain probability; None if the source lacks it
+    source: PriceSource = (
+        PriceSource.LIVE
+    )  # reuses the live/cached/estimated tag; normals -> estimated
+
+
+# --- add at the bottom of app/domain/models.py ---
+class RouteInfo(BaseModel):
+    """Travel between two points by road."""
+
+    distance_km: float = Field(ge=0)
+    duration_min: int = Field(ge=0)
+    source: PriceSource  # live API, cached, or estimated from straight-line distance
+
+
+class FlightOption(BaseModel):
+    code: str  # e.g. "AI 611"
+    airline: str
+    src_city: str
+    dst_city: str
+    depart: str  # "HH:MM"
+    arrive: str
+    duration_min: int
+    fare: Money
+
+
+class Stay(BaseModel):
+    id: str  # stable ID the LLM must reference, like Place.id
+    name: str
+    city: str
+    lat: float
+    lon: float
+    stars: int = Field(ge=1, le=5)
+    price_per_night: Money  # per room per night, in INR
