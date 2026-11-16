@@ -9,9 +9,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     # model_config tells pydantic-settings HOW to load values.
     model_config = SettingsConfigDict(
-        env_file=".env",          # read variables from a local .env file if present
-        extra="ignore",           # unknown variables in .env are skipped, not errors
-        env_ignore_empty=True,    # "REDIS_URL=" (blank) counts as "not set" -> default is used
+        env_file=".env",  # read variables from a local .env file if present
+        extra="ignore",  # unknown variables in .env are skipped, not errors
+        env_ignore_empty=True,  # "REDIS_URL=" (blank) counts as "not set" -> default is used
     )
 
     # ---- General -------------------------------------------------------
@@ -30,9 +30,9 @@ class Settings(BaseSettings):
     groq_api_key: str = ""
     google_api_key: str = ""
     # Model names live in .env because free-tier model line-ups change often.
-    groq_fast_model: str = ""   # cheap model for parsing / critique
+    groq_fast_model: str = ""  # cheap model for parsing / critique
     groq_smart_model: str = ""  # stronger model, used as a fallback for composing
-    gemini_model: str = ""      # primary "smart" model
+    gemini_model: str = ""  # primary "smart" model
     ollama_enabled: bool = False  # local backup model, off unless you run Ollama
     ollama_model: str = "llama3.1"
 
@@ -40,10 +40,12 @@ class Settings(BaseSettings):
     geoapify_api_key: str = ""
     railradar_api_key: str | None = None  # None -> use the static train timetable only
     use_mock_flights: bool = True  # no good free flight API, so mock by default
-    mock_seed: int = 42  # fixed seed -> the mock data is repeatable (important for evals)
+    mock_seed: int = (
+        42  # fixed seed -> the mock data is repeatable (important for evals)
+    )
 
     # ---- Observability ----------------------------------------------------
-    langfuse_public_key: str | None = None   # None -> tracing is simply disabled
+    langfuse_public_key: str | None = None  # None -> tracing is simply disabled
     langfuse_secret_key: str | None = None
     langfuse_host: str = "https://cloud.langfuse.com"
 
