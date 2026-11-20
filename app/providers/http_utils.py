@@ -9,7 +9,9 @@ from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponen
 
 def is_retryable(exc: BaseException) -> bool:
     """Retry network glitches and server-side (5xx) errors. Never 4xx (bad key, bad input, rate limit)."""
-    if isinstance(exc, httpx.TransportError):  # timeouts, connection resets, DNS failures
+    if isinstance(
+        exc, httpx.TransportError
+    ):  # timeouts, connection resets, DNS failures
         return True
     return isinstance(exc, httpx.HTTPStatusError) and exc.response.status_code >= 500
 

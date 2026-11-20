@@ -20,7 +20,9 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # so `import app...` works when run as a script
+sys.path.insert(
+    0, str(Path(__file__).resolve().parent.parent)
+)  # so `import app...` works when run as a script
 
 import httpx  # noqa: E402
 
@@ -30,9 +32,28 @@ from app.providers.base import ProviderError  # noqa: E402
 from app.providers.trains.railradar import RailRadarTrains, TrainRun  # noqa: E402
 
 DATA = Path(__file__).resolve().parent.parent / "data"
-FIELDS = ["number", "name", "type", "src_code", "dst_code", "depart", "arrive",
-          "duration_min", "distance_km", "run_days", "depart_day"]
-DAY_NAMES = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]  # index = weekday number (Mon=0)
+FIELDS = [
+    "number",
+    "name",
+    "type",
+    "src_code",
+    "dst_code",
+    "depart",
+    "arrive",
+    "duration_min",
+    "distance_km",
+    "run_days",
+    "depart_day",
+]
+DAY_NAMES = [
+    "mon",
+    "tue",
+    "wed",
+    "thu",
+    "fri",
+    "sat",
+    "sun",
+]  # index = weekday number (Mon=0)
 HUB_CITY = "Delhi"  # pairs with this city are always included, whatever the state
 DEFAULT_MAX_REQUESTS = 100
 
@@ -53,9 +74,15 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 def load_primary_stations(path: Path) -> dict[str, str]:
     """City -> its primary station code, from data/stations.csv."""
     try:
-        primary = {r["city"].strip(): r["code"].strip().upper() for r in read_csv(path) if r["primary"].strip() == "yes"}
+        primary = {
+            r["city"].strip(): r["code"].strip().upper()
+            for r in read_csv(path)
+            if r["primary"].strip() == "yes"
+        }
     except KeyError as exc:
-        raise SeedError(f"{path} is missing column {exc}; expected city,code,name,primary,note") from exc
+        raise SeedError(
+            f"{path} is missing column {exc}; expected city,code,name,primary,note"
+        ) from exc
     if not primary:
         raise SeedError(f"{path} has no primary stations")
     return primary
@@ -69,7 +96,9 @@ def load_states(path: Path) -> dict[str, str]:
         raise SeedError(f"{path} is missing column {exc}") from exc
 
 
-def select_pairs(primary: dict[str, str], states: dict[str, str], all_pairs: bool = False) -> list[tuple[str, str]]:
+def select_pairs(
+    primary: dict[str, str], states: dict[str, str], all_pairs: bool = False
+) -> list[tuple[str, str]]:
     """Directed (from, to) station pairs worth fetching, in a stable order."""
     by_code: dict[str, str] = {}  # primary station code -> the first city that uses it
     for city, code in primary.items():
@@ -89,11 +118,18 @@ def select_pairs(primary: dict[str, str], states: dict[str, str], all_pairs: boo
 # ------------------------------------------------------------------ output files
 def train_row(run: TrainRun) -> dict[str, Any]:
     return {
-        "number": run.number, "name": run.name, "type": run.type,
-        "src_code": run.src_code, "dst_code": run.dst_code,
-        "depart": run.depart, "arrive": run.arrive, "duration_min": run.duration_min,
+        "number": run.number,
+        "name": run.name,
+        "type": run.type,
+        "src_code": run.src_code,
+        "dst_code": run.dst_code,
+        "depart": run.depart,
+        "arrive": run.arrive,
+        "duration_min": run.duration_min,
         "distance_km": "" if run.distance_km is None else run.distance_km,
-        "run_days": "|".join(DAY_NAMES[d] for d in run.run_days),  # e.g. "mon|wed|fri"; blank = unknown
+        "run_days": "|".join(
+            DAY_NAMES[d] for d in run.run_days
+        ),  # e.g. "mon|wed|fri"; blank = unknown
         "depart_day": run.depart_day,
     }
 
@@ -116,7 +152,12 @@ def write_rows(path: Path, rows: list[dict[str, Any]]) -> None:
     with tmp.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDS, lineterminator="\n")
         writer.writeheader()
-        writer.writerows(sorted(rows, key=lambda r: (r["src_code"], r["dst_code"], r["depart"], r["number"])))
+        writer.writerows(
+            sorted(
+                rows,
+                key=lambda r: (r["src_code"], r["dst_code"], r["depart"], r["number"]),
+            )
+        )
     os.replace(tmp, path)
 
 
@@ -143,21 +184,31 @@ async def seed(args: argparse.Namespace) -> int:
         print("Stopped: RAILRADAR_API_KEY is not set (put it in .env).")
         return 1
     try:
-        pairs = select_pairs(load_primary_stations(args.stations), load_states(args.cities), args.all_pairs)
+        pairs = select_pairs(
+            load_primary_stations(args.stations),
+            load_states(args.cities),
+            args.all_pairs,
+        )
     except SeedError as exc:
         print(f"Stopped: {exc}")
         return 1
 
     meta_path = args.out.with_name(args.out.stem + ".meta.json")
-    rows = read_rows(args.out)  # with --refresh these rows are kept until each pair is re-fetched and replaced
+    rows = read_rows(
+        args.out
+    )  # with --refresh these rows are kept until each pair is re-fetched and replaced
     meta = read_meta(meta_path)
     done = set() if args.refresh else set(meta["pairs"])
     todo = [p for p in pairs if f"{p[0]}-{p[1]}" not in done]
     if not todo:
-        print(f"Nothing to do: all {len(pairs)} station pairs are already in {args.out} (use --refresh to redo them).")
+        print(
+            f"Nothing to do: all {len(pairs)} station pairs are already in {args.out} (use --refresh to redo them)."
+        )
         return 0
     batch = todo[: args.max_requests]
-    print(f"{len(pairs)} pairs in scope, {len(todo)} to fetch, fetching {len(batch)} this run...")
+    print(
+        f"{len(pairs)} pairs in scope, {len(todo)} to fetch, fetching {len(batch)} this run..."
+    )
 
     # The provider's limiter normally gives up after 5 seconds, which suits a web request. A bulk
     # run should instead wait its turn: the free tier allows 10 requests a minute.
@@ -171,18 +222,32 @@ async def seed(args: argparse.Namespace) -> int:
             try:
                 runs = await rr.timetable(src, dst)
             except ProviderError as exc:
-                if "HTTP 404" in str(exc):  # an unknown station code: note it and carry on with the others
+                if "HTTP 404" in str(
+                    exc
+                ):  # an unknown station code: note it and carry on with the others
                     problems.append(f"{src}->{dst}: {exc}")
                     print("unknown station")
                     continue
                 print("failed")
-                print(f"Stopped: {exc}\nPairs finished so far are saved; rerun to continue (tomorrow, if the daily quota is used up).")
+                print(
+                    f"Stopped: {exc}\nPairs finished so far are saved; rerun to continue (tomorrow, if the daily quota is used up)."
+                )
                 return 1
-            rows = [r for r in rows if not (r["src_code"] == src and r["dst_code"] == dst)]  # replace this pair's old rows
+            rows = [
+                r for r in rows if not (r["src_code"] == src and r["dst_code"] == dst)
+            ]  # replace this pair's old rows
             rows += [train_row(r) for r in runs]
             done.add(f"{src}-{dst}")
-            meta.update({"pairs": sorted(done), "fetched_on": date.today().isoformat(), "source": "railradar"})
-            write_rows(args.out, rows)  # save after EVERY pair, so progress survives a failure
+            meta.update(
+                {
+                    "pairs": sorted(done),
+                    "fetched_on": date.today().isoformat(),
+                    "source": "railradar",
+                }
+            )
+            write_rows(
+                args.out, rows
+            )  # save after EVERY pair, so progress survives a failure
             write_meta(meta_path, meta)
             fetched += 1
             print(f"{len(runs)} trains")
@@ -190,7 +255,9 @@ async def seed(args: argparse.Namespace) -> int:
     remaining = len(todo) - fetched - len(problems)
     print(f"Fetched {fetched} pairs into {args.out}. Remaining: {remaining}.")
     if problems:
-        print("Check these station codes in data/stations.csv (RailRadar did not recognise them):")
+        print(
+            "Check these station codes in data/stations.csv (RailRadar did not recognise them):"
+        )
         for p in problems:
             print("  ", p)
     if remaining > 0:
@@ -199,13 +266,38 @@ async def seed(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Build data/trains_sample.csv from RailRadar.")
-    parser.add_argument("--stations", type=Path, default=DATA / "stations.csv", help="station table (default data/stations.csv)")
-    parser.add_argument("--cities", type=Path, default=DATA / "cities.csv", help="city table, for states (default data/cities.csv)")
-    parser.add_argument("--out", type=Path, default=DATA / "trains_sample.csv", help="output CSV path")
-    parser.add_argument("--max-requests", type=int, default=DEFAULT_MAX_REQUESTS, help="most API requests in this run (default 100)")
-    parser.add_argument("--all-pairs", action="store_true", help="every pair of primary stations, not just same-state and Delhi pairs")
-    parser.add_argument("--refresh", action="store_true", help="re-fetch pairs that are already done")
+    parser = argparse.ArgumentParser(
+        description="Build data/trains_sample.csv from RailRadar."
+    )
+    parser.add_argument(
+        "--stations",
+        type=Path,
+        default=DATA / "stations.csv",
+        help="station table (default data/stations.csv)",
+    )
+    parser.add_argument(
+        "--cities",
+        type=Path,
+        default=DATA / "cities.csv",
+        help="city table, for states (default data/cities.csv)",
+    )
+    parser.add_argument(
+        "--out", type=Path, default=DATA / "trains_sample.csv", help="output CSV path"
+    )
+    parser.add_argument(
+        "--max-requests",
+        type=int,
+        default=DEFAULT_MAX_REQUESTS,
+        help="most API requests in this run (default 100)",
+    )
+    parser.add_argument(
+        "--all-pairs",
+        action="store_true",
+        help="every pair of primary stations, not just same-state and Delhi pairs",
+    )
+    parser.add_argument(
+        "--refresh", action="store_true", help="re-fetch pairs that are already done"
+    )
     return asyncio.run(seed(parser.parse_args(argv)))
 
 

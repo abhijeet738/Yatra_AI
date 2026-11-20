@@ -30,12 +30,14 @@ _EXPECTED_HEADER = "name,state,lat,lon,aliases"
 
 def normalize(name: str) -> str:
     """Lookup key: lower-case, punctuation and extra spaces removed. 'Mt. Abu' == 'mt abu'."""
-    return re.sub(r"[\W_]+", " ", name.casefold()).strip()  # \W also keeps non-English letters intact
+    return re.sub(
+        r"[\W_]+", " ", name.casefold()
+    ).strip()  # \W also keeps non-English letters intact
 
 
 @dataclass(frozen=True)
 class City:
-    name: str   # the canonical spelling, the one used in data/attractions.csv
+    name: str  # the canonical spelling, the one used in data/attractions.csv
     state: str
     lat: float
     lon: float
@@ -49,11 +51,15 @@ class CuratedGeo:
 
     def __init__(self, csv_path: str | Path) -> None:
         self.path = Path(csv_path)
-        self._cities: list[City] | None = None       # loaded on first use, not here (see below)
-        self._index: dict[str, City] = {}            # normalised name or alias -> city
+        self._cities: list[City] | None = (
+            None  # loaded on first use, not here (see below)
+        )
+        self._index: dict[str, City] = {}  # normalised name or alias -> city
 
     def _load(self) -> dict[str, City]:
-        if self._cities is None:  # a failed load stays None, so fixing the file needs no restart
+        if (
+            self._cities is None
+        ):  # a failed load stays None, so fixing the file needs no restart
             self._cities, self._index = self._read()
         return self._index
 
@@ -64,7 +70,9 @@ class CuratedGeo:
                 columns = set(reader.fieldnames or [])
                 rows = list(reader)
         except OSError as exc:
-            raise ProviderError(f"{self.name}: cannot read {self.path} ({exc.strerror})") from exc
+            raise ProviderError(
+                f"{self.name}: cannot read {self.path} ({exc.strerror})"
+            ) from exc
         missing = _REQUIRED_COLUMNS - columns
         if columns and missing:
             raise ProviderError(
@@ -86,15 +94,27 @@ class CuratedGeo:
                 )
                 if not city.name:
                     raise ValueError("empty name")
-                if not (math.isfinite(city.lat) and math.isfinite(city.lon)
-                        and -90 <= city.lat <= 90 and -180 <= city.lon <= 180):
-                    raise ValueError(f"coordinates out of range ({city.lat}, {city.lon})")
+                if not (
+                    math.isfinite(city.lat)
+                    and math.isfinite(city.lon)
+                    and -90 <= city.lat <= 90
+                    and -180 <= city.lon <= 180
+                ):
+                    raise ValueError(
+                        f"coordinates out of range ({city.lat}, {city.lon})"
+                    )
                 keys = {normalize(city.name)} | {
-                    normalize(a) for a in (row.get("aliases") or "").split("|") if a.strip()
+                    normalize(a)
+                    for a in (row.get("aliases") or "").split("|")
+                    if a.strip()
                 }
                 for key in keys:
-                    if index.get(key, city) != city:  # same spelling already points at another city
-                        raise ValueError(f"{key!r} already belongs to {index[key].name!r}")
+                    if (
+                        index.get(key, city) != city
+                    ):  # same spelling already points at another city
+                        raise ValueError(
+                            f"{key!r} already belongs to {index[key].name!r}"
+                        )
                     index[key] = city
             except (KeyError, ValueError, TypeError) as exc:
                 raise ProviderError(
@@ -124,7 +144,9 @@ class CuratedGeo:
     async def coords(self, city: str) -> tuple[float, float]:
         found = self._lookup(city)
         if found is None:
-            raise ProviderError(f"{self.name}: unknown city {city!r}")  # the chain moves on to live geocoding
+            raise ProviderError(
+                f"{self.name}: unknown city {city!r}"
+            )  # the chain moves on to live geocoding
         return (found.lat, found.lon)
 
 
@@ -132,14 +154,22 @@ class CuratedGeo:
 class GeoapifyGeo:
     name = "geoapify-geocoding"
 
-    def __init__(self, client: httpx.AsyncClient, api_key: str, country_code: str | None = "in") -> None:
+    def __init__(
+        self, client: httpx.AsyncClient, api_key: str, country_code: str | None = "in"
+    ) -> None:
         self.client = client
-        self._key = api_key                # underscore: internal. It must never appear in logs or errors.
-        self.country_code = country_code   # restrict matches to one country; None = worldwide
+        self._key = (
+            api_key  # underscore: internal. It must never appear in logs or errors.
+        )
+        self.country_code = (
+            country_code  # restrict matches to one country; None = worldwide
+        )
 
     @http_retry()
     async def _fetch(self, params: dict[str, str]) -> dict[str, Any]:
-        await acquire(SERVICE)  # inside the retry: every attempt spends quota, so every attempt checks it
+        await acquire(
+            SERVICE
+        )  # inside the retry: every attempt spends quota, so every attempt checks it
         r = await self.client.get(GEOAPIFY_URL, params=params, timeout=10)
         r.raise_for_status()
         data: dict[str, Any] = r.json()
@@ -154,8 +184,8 @@ class GeoapifyGeo:
         params = {
             "text": text,
             "type": "locality",  # cities, districts and states, but not streets or shops
-            "limit": "1",        # results come sorted by relevance; we only want the best
-            "format": "json",    # the default is GeoJSON
+            "limit": "1",  # results come sorted by relevance; we only want the best
+            "format": "json",  # the default is GeoJSON
             "apiKey": self._key,
         }
         if self.country_code:
@@ -174,7 +204,9 @@ class GeoapifyGeo:
                 f"{self.name}: HTTP {status}: {scrub(error_reason(exc.response), self._key)}{hint}"
             ) from None
         except httpx.TransportError as exc:
-            raise ProviderError(f"{self.name}: network error: {type(exc).__name__}") from None
+            raise ProviderError(
+                f"{self.name}: network error: {type(exc).__name__}"
+            ) from None
         except ValueError:  # 200 OK, but the body was not valid JSON
             raise ProviderError(f"{self.name}: response was not valid JSON") from None
         return self._parse(data, city)
@@ -188,11 +220,20 @@ class GeoapifyGeo:
                 raise ProviderError(f"{name}: no match for {city!r}")
             best = results[0]
             lat, lon = float(best["lat"]), float(best["lon"])
-            confidence = (best.get("rank") or {}).get("confidence")  # 0..1; may be absent
+            confidence = (best.get("rank") or {}).get(
+                "confidence"
+            )  # 0..1; may be absent
         except (KeyError, IndexError, TypeError, ValueError) as exc:
             raise ProviderError(f"{name}: unexpected response shape: {exc!r}") from None
         if confidence is not None and float(confidence) < MIN_CONFIDENCE:
-            raise ProviderError(f"{name}: low-confidence match for {city!r} (confidence {confidence})")
-        if not (math.isfinite(lat) and math.isfinite(lon) and -90 <= lat <= 90 and -180 <= lon <= 180):
+            raise ProviderError(
+                f"{name}: low-confidence match for {city!r} (confidence {confidence})"
+            )
+        if not (
+            math.isfinite(lat)
+            and math.isfinite(lon)
+            and -90 <= lat <= 90
+            and -180 <= lon <= 180
+        ):
             raise ProviderError(f"{name}: out-of-range coordinates for {city!r}")
         return (lat, lon)
