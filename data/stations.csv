@@ -1,0 +1,23 @@
+city,code,name,primary,note
+Delhi,NDLS,New Delhi,yes,
+Delhi,DLI,Delhi Junction (Old Delhi),no,
+Delhi,NZM,Hazrat Nizamuddin,no,
+Delhi,ANVT,Anand Vihar Terminal,no,
+Jaipur,JP,Jaipur Junction,yes,
+Jodhpur,JU,Jodhpur Junction,yes,
+Udaipur,UDZ,Udaipur City,yes,
+Pushkar,AII,Ajmer Junction,yes,"Pushkar has no main station of its own; Ajmer is the nearest major one, then a short road transfer"
+Jaisalmer,JSM,Jaisalmer,yes,
+Bikaner,BKN,Bikaner Junction,yes,
+Mount Abu,ABR,Abu Road,yes,"Mount Abu has no station; Abu Road is the railhead, then a road transfer up the hill"
+Ranthambore,SWM,Sawai Madhopur Junction,yes,Railhead for Ranthambore National Park; a road transfer is needed
+Kochi,ERS,Ernakulam Junction,yes,
+Kochi,ERN,Ernakulam Town,no,
+Kochi,AWY,Aluva,no,"On the northern side of Kochi, close to the airport"
+Munnar,AWY,Aluva,yes,"Munnar has no railway station; Aluva and Ernakulam are the usual railheads, then a long road transfer into the hills"
+Munnar,ERS,Ernakulam Junction,no,"Alternative railhead, then a long road transfer"
+Alappuzha,ALLP,Alappuzha,yes,
+Thiruvananthapuram,TVC,Thiruvananthapuram Central,yes,
+Thiruvananthapuram,KCVL,Kochuveli,no,
+Thekkady,KTYM,Kottayam,yes,"Thekkady has no railway station; Kottayam is a common railhead, then a road transfer"
+Varkala,VAK,Varkala Sivagiri,yes,

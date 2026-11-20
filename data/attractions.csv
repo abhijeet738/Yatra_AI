@@ -1,0 +1,50 @@
+id,name,city,lat,lon,category,hours,ticket_inr,description,confidence
+jaipur-amber-fort,Amber Fort,Jaipur,26.9855,75.8513,fort,Daily 08:00-17:30,100,"Hilltop fort-palace above Maota Lake, about 11 km from the city centre. Online sources disagree on ticket price and closing time; verify.",low
+jaipur-city-palace,City Palace,Jaipur,26.9258,75.8237,palace,Daily 09:30-17:00,200,Royal palace complex with museums in the old city; part of it is still a royal residence.,low
+jaipur-hawa-mahal,Hawa Mahal,Jaipur,26.9239,75.8267,palace,Daily 09:00-16:30,50,"Pink sandstone facade with latticed windows, in the old city.",low
+jaipur-jantar-mantar,Jantar Mantar,Jaipur,26.9247,75.8244,monument,Daily 09:00-16:30,50,18th-century astronomical observatory with large stone instruments; UNESCO World Heritage Site.,low
+jaipur-nahargarh-fort,Nahargarh Fort,Jaipur,26.9373,75.8155,fort,Daily 10:00-17:30,50,"Hilltop fort above the city, popular for sunset views.",low
+jaipur-jaigarh-fort,Jaigarh Fort,Jaipur,26.9853,75.8458,fort,Daily 09:00-16:30,100,"Fort on the ridge above Amber Fort, with a very large cannon (Jaivana).",low
+jaipur-albert-hall-museum,Albert Hall Museum,Jaipur,26.9118,75.819,museum,"Daily 09:00-17:00,19:00-22:00",40,Museum in an Indo-Saracenic building; also open in the evening (separate night ticket).,medium
+jaipur-jal-mahal,Jal Mahal,Jaipur,26.9535,75.8466,lake,,0,"Palace in the middle of Man Sagar Lake, viewed from the lakeside promenade; visitors cannot go inside.",medium
+jaipur-johari-bazaar,Johari Bazaar,Jaipur,26.919,75.8265,market,Mon-Sat 10:30-20:30,0,"Traditional jewellery, textile and handicraft market in the old city; many shops close on Sundays.",low
+jaipur-lmb,Laxmi Misthan Bhandar (LMB),Jaipur,26.919,75.8268,food,Daily 08:00-22:30,0,Long-established vegetarian sweets shop and restaurant on Johari Bazaar.,low
+jodhpur-mehrangarh-fort,Mehrangarh Fort,Jodhpur,26.2979,73.0185,fort,Daily 09:00-17:00,200,"Large fort on a rocky hill above the old Blue City, with a museum and palace rooms.",low
+jodhpur-jaswant-thada,Jaswant Thada,Jodhpur,26.3022,73.0224,monument,Daily 09:00-17:00,30,White marble cenotaph near Mehrangarh Fort.,low
+jodhpur-umaid-bhawan-museum,Umaid Bhawan Palace Museum,Jodhpur,26.281,73.0476,museum,Daily 09:00-17:00,,Museum in one part of a working palace hotel; the rest of the palace is not open to day visitors.,low
+jodhpur-clock-tower-sardar-market,Clock Tower and Sardar Market,Jodhpur,26.2957,73.0207,market,Mon-Sat 10:00-20:00,0,"Busy market around the clock tower in the old city, known for spices, textiles and handicrafts.",low
+jodhpur-mandore-gardens,Mandore Gardens,Jodhpur,26.3527,73.0407,garden,,0,"Gardens and historic cenotaphs on the site of the former capital, about 9 km north of the centre.",low
+jodhpur-mishrilal-lassi,Mishrilal Hotel (makhaniya lassi),Jodhpur,26.2956,73.0212,food,,0,Shop near the clock tower known for its saffron-flavoured lassi.,low
+udaipur-city-palace,"City Palace, Udaipur",Udaipur,24.5764,73.6835,palace,Daily 09:30-17:30,300,"Palace complex on the bank of Lake Pichola, with a museum.",low
+udaipur-lake-pichola,Lake Pichola,Udaipur,24.5714,73.6787,lake,,,Large lake beside the City Palace; boat rides run from the palace jetties and prices vary.,medium
+udaipur-jagdish-temple,Jagdish Temple,Udaipur,24.5788,73.6838,temple,,0,Vishnu temple next to the City Palace; entry is free.,low
+udaipur-saheliyon-ki-bari,Saheliyon Ki Bari,Udaipur,24.5983,73.6846,garden,,,"Garden with fountains and a lotus pool, north of the old city.",low
+udaipur-sajjangarh-monsoon-palace,Sajjangarh (Monsoon Palace),Udaipur,24.5951,73.635,palace,Daily 09:00-17:30,,"Hilltop palace west of the city, popular for sunset views; a fee is charged for the road in.",low
+udaipur-bagore-ki-haveli,Bagore Ki Haveli,Udaipur,24.5791,73.6811,museum,,,18th-century haveli museum on Lake Pichola; evening folk dance shows are held here.,low
+udaipur-fateh-sagar-lake,Fateh Sagar Lake,Udaipur,24.6003,73.6742,lake,,0,Artificial lake north-west of the old city with a lakeside promenade.,low
+pushkar-brahma-temple,Brahma Temple,Pushkar,26.4875,74.5522,temple,,0,One of the few temples dedicated to Brahma; dress modestly and check the rules on phones and cameras.,low
+pushkar-lake,Pushkar Lake and Ghats,Pushkar,26.4896,74.5511,lake,,0,Holy lake ringed by bathing ghats; the town is vegetarian and alcohol-free.,low
+pushkar-main-bazaar,Pushkar Main Bazaar,Pushkar,26.49,74.552,market,,0,"Market street near the lake selling handicrafts, textiles and silver jewellery.",low
+jaisalmer-fort,Jaisalmer Fort,Jaisalmer,26.9125,70.9128,fort,,0,"Living fort of golden sandstone with shops, hotels and homes inside; entering is free, museums inside charge separately.",low
+jaisalmer-patwon-ki-haveli,Patwon Ki Haveli,Jaisalmer,26.917,70.9143,haveli,Daily 10:00-17:00,,Cluster of merchant mansions with carved sandstone facades.,low
+jaisalmer-gadisar-lake,Gadisar Lake,Jaisalmer,26.9068,70.9215,lake,,0,"Historic reservoir south of the fort, with ghats and small temples.",low
+jaisalmer-sam-sand-dunes,Sam Sand Dunes,Jaisalmer,26.8326,70.5117,nature,,0,Desert dunes about 40 km west of Jaisalmer; sunset camel rides and desert camps are paid extras.,medium
+kochi-chinese-fishing-nets,"Chinese Fishing Nets, Fort Kochi",Kochi,9.9668,76.2418,viewpoint,,0,"Cantilevered fishing nets along the Fort Kochi waterfront, popular at sunset.",low
+kochi-mattancherry-palace,Mattancherry Palace (Dutch Palace),Kochi,9.9582,76.2597,palace,Sat-Thu 10:00-17:00,5,16th-century palace museum with Kerala murals; closed on Fridays.,low
+kochi-paradesi-synagogue,Paradesi Synagogue,Kochi,9.957,76.2587,monument,"Sun-Fri 10:00-12:00,15:00-17:00",10,Synagogue in Jew Town dating from 1568; closed on Saturdays and Jewish holidays.,low
+kochi-st-francis-church,"St. Francis Church, Fort Kochi",Kochi,9.9647,76.2427,church,,0,One of the oldest European-built churches in India.,low
+kochi-jew-town-antiques,Jew Town and Antique Market,Kochi,9.9575,76.259,market,,0,"Lane of antique, spice and curio shops next to the synagogue.",low
+kochi-marine-drive,"Marine Drive, Kochi",Kochi,9.978,76.276,viewpoint,,0,Waterfront promenade on the backwater in the city centre.,low
+kochi-kayees-rahmathulla-cafe,Kayees Rahmathulla Cafe,Kochi,9.9612,76.2609,food,,0,Well-known Mattancherry eatery for Malabar-style biryani.,low
+alappuzha-backwaters,Alappuzha Backwaters (Vembanad Lake),Alappuzha,9.4981,76.3388,backwater,,,Network of canals and lake best seen by houseboat or shared boat; prices vary widely by boat and season.,medium
+alappuzha-beach,Alappuzha Beach,Alappuzha,9.4903,76.3148,beach,,0,Town beach with an old pier.,low
+munnar-eravikulam-national-park,Eravikulam National Park,Munnar,10.165,77.047,wildlife,Daily 08:00-16:00,200,"High-altitude park, home of the Nilgiri tahr; closed to visitors for a period around the calving season (often Feb-Mar). Verify dates.",low
+munnar-mattupetty-dam,Mattupetty Dam,Munnar,10.107,77.123,lake,,,"Dam and reservoir about 13 km from Munnar town, with boating.",low
+munnar-tea-museum,Tea Museum (Kanan Devan Hills),Munnar,10.087,77.063,museum,,,Small museum on the history of tea in the Munnar hills.,low
+munnar-tea-plantations,Munnar Tea Plantations,Munnar,10.09,77.06,nature,,0,Hillsides of tea estates around the town; viewpoints along the roads are free.,low
+thekkady-periyar-tiger-reserve,Periyar Tiger Reserve and Lake,Thekkady,9.599,77.165,wildlife,Daily 07:00-17:00,,Forest reserve around Periyar Lake; entry and boat rides are ticketed separately.,low
+thiruvananthapuram-padmanabhaswamy-temple,Sree Padmanabhaswamy Temple,Thiruvananthapuram,8.4829,76.9436,temple,,0,Major Vishnu temple in the fort area; strict dress code and entry is restricted to Hindus. Verify current rules.,low
+thiruvananthapuram-napier-museum,Napier Museum,Thiruvananthapuram,8.5082,76.9546,museum,Tue-Sun 10:00-17:00,20,"19th-century Indo-Saracenic museum building, next to the zoo.",low
+thiruvananthapuram-kovalam-beach,Kovalam Beach,Thiruvananthapuram,8.3988,76.9784,beach,,0,Crescent beaches south of the city.,low
+thiruvananthapuram-shanghumugham-beach,Shanghumugham Beach,Thiruvananthapuram,8.4783,76.913,beach,,0,"City beach next to the airport, known for sunsets.",low
+varkala-beach-cliff,Varkala Beach and Cliff,Varkala,8.7335,76.704,beach,,0,Beach below a red laterite cliff lined with cafes and shops.,low
