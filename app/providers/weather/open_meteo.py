@@ -5,11 +5,11 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Any
 
 import httpx
-from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 from app.core.ratelimit import acquire
 from app.domain.models import DailyWeather, PriceSource
 from app.providers.base import ProviderError
+from app.providers.http_utils import error_reason, http_retry
 
 BASE_URL = "https://api.open-meteo.com/v1/forecast"
 SERVICE = "open-meteo"  # the key this provider uses in core/ratelimit.py
@@ -26,23 +26,6 @@ def today_ist() -> date:
     return datetime.now(IST).date()
 
 
-def _is_retryable(exc: BaseException) -> bool:
-    """Retry network glitches and server-side (5xx) errors. Never retry 4xx: it won't change."""
-    if isinstance(
-        exc, httpx.TransportError
-    ):  # timeouts, connection resets, DNS failures
-        return True
-    return isinstance(exc, httpx.HTTPStatusError) and exc.response.status_code >= 500
-
-
-def _reason(response: httpx.Response) -> str:
-    """Open-Meteo errors look like {"error": true, "reason": "..."}; fall back to raw text."""
-    try:
-        return str(response.json()["reason"])
-    except Exception:
-        return response.text[:200]
-
-
 class OpenMeteoWeather:
     name = "open-meteo"
 
@@ -51,12 +34,7 @@ class OpenMeteoWeather:
             client  # shared client created in main.py's lifespan (connection pooling)
         )
 
-    @retry(
-        stop=stop_after_attempt(3),  # at most 3 tries in total
-        wait=wait_exponential(min=1, max=8),  # pause 1s, then 2s, ... between tries
-        retry=retry_if_exception(_is_retryable),
-        reraise=True,  # surface the real error, not tenacity's RetryError
-    )
+    @http_retry()
     async def _fetch(self, params: dict[str, Any]) -> dict[str, Any]:
         await acquire(
             SERVICE
@@ -93,7 +71,7 @@ class OpenMeteoWeather:
         except httpx.HTTPStatusError as exc:
             status = exc.response.status_code
             raise ProviderError(
-                f"{self.name}: HTTP {status}: {_reason(exc.response)}"
+                f"{self.name}: HTTP {status}: {error_reason(exc.response)}"
             ) from exc
         except httpx.TransportError as exc:  # still failing after all retries
             raise ProviderError(f"{self.name}: network error: {exc!r}") from exc
